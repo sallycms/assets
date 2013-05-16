@@ -9,7 +9,7 @@
  */
 
 // init the app
-$app = new sly\Assets\App();
+$app = new sly\Assets\App($container);
 sly_Core::setCurrentApp($app);
 $app->initialize();
 
