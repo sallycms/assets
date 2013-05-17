@@ -11,9 +11,13 @@
 namespace sly\Asset\Controller\Asset;
 
 use Gaufrette\Util\Path;
-use sly_Controller_Frontend_Base;
+use sly_Authorisation_Exception;
+use sly_Exception;
+use sly_Response;
+use sly_Util_Directory;
+use sly_Util_String;
 
-abstract class Base extends sly_Controller_Frontend_Base {
+abstract class Base extends \sly_Controller_Frontend_Base {
 	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPath, $checkPermissions) {
 		if (!file_exists($file)) {
 			$response = new sly_Response('File not found.', 404);
@@ -53,7 +57,7 @@ abstract class Base extends sly_Controller_Frontend_Base {
 
 			// check the ETag
 
-			$type = sly_Util_File::getMimetype($file);
+			$type = \sly_Util_File::getMimetype($file);
 			$etag = $configs['etag'] && file_exists($file) ? md5_file($file) : null;
 
 			if ($etag) {
@@ -80,7 +84,7 @@ abstract class Base extends sly_Controller_Frontend_Base {
 
 			// prepare the response
 
-			$response = new sly_Response_Stream($resultFile, 200);
+			$response = new \sly_Response_Stream($resultFile, 200);
 			$response->setContentType($type, 'UTF-8');
 
 			$this->setResponseHeaders($response, $etag, $type);
@@ -95,7 +99,7 @@ abstract class Base extends sly_Controller_Frontend_Base {
 				$response->addCacheControlDirective('private');
 			}
 		}
-		catch (Exception $e) {
+		catch (\Exception $e) {
 			$response = new sly_Response();
 
 			if ($e instanceof sly_Authorisation_Exception) {
@@ -120,7 +124,7 @@ abstract class Base extends sly_Controller_Frontend_Base {
 		return $response;
 	}
 
-	protected function checkForBlockedExtensions(sly_Configuration $config, $file) {
+	protected function checkForBlockedExtensions(\sly_Configuration $config, $file) {
 		$blocked = $config->get('blocked_extensions');
 
 		foreach ($blocked as $ext) {
@@ -147,7 +151,7 @@ abstract class Base extends sly_Controller_Frontend_Base {
 		}
 	}
 
-	protected function checkFilePermission(sly_Asset_Service $service, $file) {
+	protected function checkFilePermission(\sly_Asset_Service $service, $file) {
 		$isProtected = $service->isProtected($file);
 
 		if ($isProtected && !$service->checkPermission($file)) {
