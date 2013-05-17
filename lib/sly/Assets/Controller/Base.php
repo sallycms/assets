@@ -15,6 +15,14 @@ use sly_Controller_Frontend_Base;
 
 abstract class Base extends sly_Controller_Frontend_Base {
 	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPath, $checkPermissions) {
+		if (!file_exists($file)) {
+			$response = new sly_Response('File not found.', 404);
+			$response->setExpires(time()-24*3600);
+			$response->setContentType('text/plain', 'UTF-8');
+
+			return $response;
+		}
+
 		$container = $this->getContainer();
 		$service   = $container->getAssetService();
 		$configs   = $config->get('frontend/assets', array(
