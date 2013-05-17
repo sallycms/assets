@@ -57,7 +57,7 @@ class Asset extends Base {
 			return new sly_Response('no app given', 400);
 		}
 
-		$appDir = SLY_BASE.'/'.basename($app); // basename is just to make sure there are no path jumps in there
+		$appDir = SLY_SALLYFOLDER.'/'.basename($app); // basename is just to make sure there are no path jumps in there
 
 		if (!is_dir($appDir) || !is_file($appDir.'/composer.json')) {
 			return new sly_Response('no app given', 400);

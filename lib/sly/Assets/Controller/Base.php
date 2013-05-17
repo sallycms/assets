@@ -28,6 +28,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		}
 
 		$container = $this->getContainer();
+		$config    = $container->getConfig();
 		$service   = $container->getAssetService();
 		$configs   = $config->get('frontend/assets', array(
 			'etag'          => false,
