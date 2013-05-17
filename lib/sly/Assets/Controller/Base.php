@@ -30,7 +30,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		$container = $this->getContainer();
 		$config    = $container->getConfig();
 		$service   = $container->getAssetService();
-		$configs   = $config->get('frontend/assets', array(
+		$configs   = $config->get('assets', array(
 			'etag'          => false,
 			'cache-control' => array(),
 			'expires'       => null
@@ -47,6 +47,8 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$isProtected = $checkPermissions ? $this->checkFilePermission($service, $file) : false;
 
 			// "clear" any errors that might came up when detecting the timezone
+			// or, more likely, Gaufrette's suppressed error from unregistering
+			// the sly:// protocol.
 
 			if (error_get_last()) @trigger_error('', E_USER_NOTICE);
 			$errorLevel = error_reporting(0);
@@ -57,11 +59,11 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$etag = $configs['etag'] && file_exists($file) ? md5_file($file) : null;
 
 			if ($etag) {
-				$etags = $request->getETags();
+				$etags = $container->getRequest()->getETags();
 
 				if (in_array('"'.$etag.'"', $etags)) {
 					$response = new sly_Response('Not modified', 304);
-					$this->setResponseHeaders($response, $etag, $type);
+					$this->setResponseHeaders($configs, $response, $etag, $type);
 
 					return $response;
 				}
