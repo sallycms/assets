@@ -126,4 +126,17 @@ class App extends sly_App_Base {
 		// let addOns extend our router rule set
 		return $container->getDispatcher()->filter('SLY_ASSETS_ROUTER', $router, array('app' => $this));
 	}
+
+	/**
+	 * get request dispatcher
+	 *
+	 * @return sly_Dispatcher
+	 */
+	protected function getDispatcher() {
+		if ($this->dispatcher === null) {
+			$this->dispatcher = new sly_Dispatcher($this->getContainer(), $this->getControllerClassPrefix(), false);
+		}
+
+		return $this->dispatcher;
+	}
 }
