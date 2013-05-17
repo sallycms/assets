@@ -12,7 +12,3 @@ assets:
     - sally/backend/assets/
     - sally/setup/assets/
     - sally/noir/assets/
-
-  rewrites:
-    - { pattern: '#^assets/addon/([^/.]+)/([^/.]+)/(.+?)$#', replacement: 'sally/addons/$1/$2/assets/$3' }
-    - { pattern: '#^assets/app/([^/.]+)/(.+?)$#',            replacement: 'sally/$1/assets/$2'           }
