@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace sly\Assets\Controller\Asset;
+namespace sly\Assets\Controller;
 
 use Gaufrette\Util\Path;
 use sly_Authorisation_Exception;
