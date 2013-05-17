@@ -4,11 +4,3 @@ assets:
   cache-control:
     default:
       max-age: 29030401
-
-  directories:
-    - assets/
-    - data/mediapool/
-    - data/dyn/public/
-    - sally/backend/assets/
-    - sally/setup/assets/
-    - sally/noir/assets/

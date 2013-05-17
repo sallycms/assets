@@ -43,7 +43,7 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile($fullPath, true, true, true, true);
+		return $this->sendFile($fullPath, true, true, true);
 	}
 
 	public function appAction() {
@@ -71,7 +71,7 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile($appDir.'/assets/'.$file, true, true, true, true);
+		return $this->sendFile($appDir.'/assets/'.$file, true, true, true);
 	}
 
 	public function projectAction() {
@@ -86,7 +86,7 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile(SLY_BASE.'/assets/'.$file, true, true, true, true);
+		return $this->sendFile(SLY_BASE.'/assets/'.$file, true, true, true);
 	}
 
 	public function mediapoolAction() {
@@ -101,6 +101,6 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile('sly://media/'.$file, false, true, true, true);
+		return $this->sendFile('sly://media/'.$file, false, true, true);
 	}
 }
