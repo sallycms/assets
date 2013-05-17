@@ -14,28 +14,29 @@ use Gaufrette\Util\Path;
 use sly_Controller_Frontend_Base;
 
 abstract class Base extends sly_Controller_Frontend_Base {
-	protected function sendFile($filename, $process) {
+	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPath, $checkPermissions) {
+		$container = $this->getContainer();
+		$service   = $container->getAssetService();
+		$configs   = $config->get('frontend/assets', array(
+			'etag'          => false,
+			'cache-control' => array(),
+			'expires'       => null,
+			'directories'   => array()
+		));
+
 		try {
 			// check if the filetype may be accessed at all
 			// and check if the file is inside an allowed path
 
-			$file    = $this->normalizePath($file);
-			$service = $container->getAssetService();
-			$configs = $config->get('frontend/assets', array(
-				'etag'          => false,
-				'cache-control' => array(),
-				'expires'       => null,
-				'directories'   => array(),
-				'rewrites'      => array()
-			));
+			if ($useExtensionBlacklist) {
+				$this->checkForBlockedExtensions($config, $file);
+			}
 
-			// 'addon/sallycms/be-search/foo.css' =>
-			$file = $this->resolveRewrites($configs['rewrites'], $file);
+			if ($checkPath) {
+				$this->checkForAllowedPath($configs['directories'], $file);
+			}
 
-			$this->checkForBlockedExtensions($config, $file);
-			$this->checkForAllowedPath($configs['directories'], $file);
-
-			$isProtected = $this->checkFilePermission($service, $file);
+			$isProtected = $checkPermissions ? $this->checkFilePermission($service, $file) : false;
 
 			// "clear" any errors that might came up when detecting the timezone
 
@@ -58,9 +59,9 @@ abstract class Base extends sly_Controller_Frontend_Base {
 				}
 			}
 
-			// process the file
+			// optionally process the file
 
-			$resultFile = $service->process($file);
+			$resultFile = $process ? $service->process($file) : $file;
 			$lastError  = error_get_last();
 
 			error_reporting($errorLevel);
@@ -109,16 +110,6 @@ abstract class Base extends sly_Controller_Frontend_Base {
 		}
 
 		return $response;
-	}
-
-	protected function resolveRewrites(array $rewrites, $file) {
-		foreach ($rewrites as $pattern => $replacement) {
-			if (preg_match($pattern, $file)) {
-				return preg_replace($pattern, $replacement, $file);
-			}
-		}
-
-		return $file;
 	}
 
 	protected function checkForBlockedExtensions(sly_Configuration $config, $file) {
