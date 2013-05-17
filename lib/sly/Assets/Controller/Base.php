@@ -18,7 +18,7 @@ use sly_Util_Directory;
 use sly_Util_String;
 
 abstract class Base extends \sly_Controller_Frontend_Base {
-	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPath, $checkPermissions) {
+	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPermissions) {
 		if (!file_exists($file)) {
 			$response = new sly_Response('File not found.', 404);
 			$response->setExpires(time()-24*3600);
@@ -33,8 +33,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		$configs   = $config->get('frontend/assets', array(
 			'etag'          => false,
 			'cache-control' => array(),
-			'expires'       => null,
-			'directories'   => array()
+			'expires'       => null
 		));
 
 		try {
@@ -43,10 +42,6 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 
 			if ($useExtensionBlacklist) {
 				$this->checkForBlockedExtensions($config, $file);
-			}
-
-			if ($checkPath) {
-				$this->checkForAllowedPath($configs['directories'], $file);
 			}
 
 			$isProtected = $checkPermissions ? $this->checkFilePermission($service, $file) : false;
@@ -130,23 +125,6 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 
 		foreach ($blocked as $ext) {
 			if (sly_Util_String::endsWith($file, $ext)) {
-				throw new sly_Authorisation_Exception('Forbidden');
-			}
-		}
-	}
-
-	protected function checkForAllowedPath(array $allowed, $file) {
-		$ok = strpos($file, '/') === false; // allow files in root directory (favicon)
-
-		if (!$ok) {
-			foreach ($allowed as $path) {
-				if (sly_Util_String::startsWith($file, $this->normalizePath($path))) {
-					$ok = true;
-					break;
-				}
-			}
-
-			if (!$ok) {
 				throw new sly_Authorisation_Exception('Forbidden');
 			}
 		}
