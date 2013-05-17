@@ -28,6 +28,7 @@ class App extends sly_App_Base {
 
 	public function initialize() {
 		$container = $this->getContainer();
+		$config    = $container->getConfig();
 
 		// init basic error handling
 		$container->getErrorHandler()->init();
@@ -37,9 +38,13 @@ class App extends sly_App_Base {
 
 		// init a proper locale, even though we don't need one in the app (but an addOn might need it)
 		if (!$container->has('sly-i18n')) {
-			$locale = $container->getConfig()->get('default_locale', 'en_gb');
+			$locale = $config->get('default_locale', 'en_gb');
 			$container->setI18N(new sly_I18N($locale, null, false));
 		}
+
+		// load static config
+		$yamlReader = $container['sly-service-yaml'];
+		$config->setStatic('/', $yamlReader->load(SLY_SALLYFOLDER.'/assets/config/static.yml'));
 
 		// boot addOns
 		sly_Core::loadAddOns();

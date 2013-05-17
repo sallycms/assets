@@ -1,5 +1,5 @@
 assets:
-  etag: false
+  etag: true
   expires: ~
   cache-control:
     default:
