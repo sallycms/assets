@@ -134,7 +134,7 @@ class App extends sly_App_Base {
 	 */
 	protected function getDispatcher() {
 		if ($this->dispatcher === null) {
-			$this->dispatcher = new sly_Dispatcher($this->getContainer(), $this->getControllerClassPrefix(), false);
+			$this->dispatcher = new \sly_Dispatcher($this->getContainer(), $this->getControllerClassPrefix(), false);
 		}
 
 		return $this->dispatcher;
