@@ -106,7 +106,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 				$response->setStatusCode(500);
 			}
 
-			if ($container->get('sly-environment') !== 'dev' || $e instanceof sly_Authorisation_Exception) {
+			if ($container->get('sly-environment') === 'dev' || $e instanceof sly_Authorisation_Exception) {
 				$response->setContent($e->getMessage());
 			}
 			else {
