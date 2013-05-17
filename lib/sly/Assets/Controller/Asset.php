@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  */
 
-namespace sly\Asset\Controller\Asset;
+namespace sly\Assets\Controller\Asset;
 
 use Gaufrette\Util\Path;
 use sly_Response;
