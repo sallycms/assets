@@ -69,7 +69,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 
 			// optionally process the file
 
-			$resultFile = $process ? $service->process($file) : $file;
+			$resultFile = $process ? $service->compile($file) : $file;
 			$lastError  = error_get_last();
 
 			error_reporting($errorLevel);
@@ -83,7 +83,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$response = new \sly_Response_Stream($resultFile, 200);
 			$response->setContentType($type, 'UTF-8');
 
-			$this->setResponseHeaders($response, $etag, $type);
+			$this->setResponseHeaders($configs, $response, $etag, $type);
 
 			// if the file is protected, mark the response as private
 
