@@ -30,6 +30,48 @@ class App extends sly_App_Base {
 		$container = $this->getContainer();
 		$config    = $container->getConfig();
 
+		// add our own services
+		$container['sly-service-asset'] = $container->share(function($container) {
+			$service      = new Service($container['sly-dispatcher']);
+			$lessCompiler = $container['sly-service-asset-lessphp'];
+			$filePerm     = $container['sly-config']->get('fileperm') ?: 0644;
+			$dirPerm      = $container['sly-config']->get('dirperm') ?: 0777;
+
+			$service->addProcessListener(function($lessFile) use ($lessCompiler, $filePerm, $dirPerm) {
+				if (!\sly_Util_String::endsWith($lessFile, '.less') || !file_exists($lessFile)) {
+					return $lessFile;
+				}
+
+				$css     = $lessCompiler->process($lessFile);
+				$dir     = SLY_TEMPFOLDER.'/sally/less-cache';
+				$tmpFile = $dir.'/'.md5($lessFile).'.css';
+
+				\sly_Util_Directory::create($dir, $dirPerm, true);
+
+				file_put_contents($tmpFile, $css);
+				chmod($tmpFile, $filePerm);
+
+				return $tmpFile;
+			});
+
+			return $service;
+		});
+
+		$container['sly-service-asset-lessphp'] = $container->share(function($container) {
+			$lessc    = new \lessc();
+			$compiler = new Compiler\Lessphp($lessc);
+			$config   = $container['sly-config'];
+
+			$lessc->setFormatter('compressed');
+			$lessc->registerFunction('asset', array($compiler, 'lessAssetFunction'));
+
+			foreach ($config->get('less_import_dirs') as $includeDir) {
+				$compiler->addImportDir(SLY_BASE.DIRECTORY_SEPARATOR.trim($includeDir, DIRECTORY_SEPARATOR));
+			}
+
+			return $compiler;
+		});
+
 		// init basic error handling
 		$container->getErrorHandler()->init();
 
