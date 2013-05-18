@@ -12,9 +12,10 @@ namespace sly\Assets;
 
 class Util {
 	private static $baseUrl;
+	private static $appName;
 
-	public static function appUri($app, $filename) {
-		return self::getBaseUrl().'assets/app/'.$app.'/'.$filename;
+	public static function appUri($filename, $app = null) {
+		return self::getBaseUrl().'assets/app/'.($app ?: self::getAppName()).'/'.$filename;
 	}
 
 	public static function addOnUri($addOn, $filename) {
@@ -31,6 +32,7 @@ class Util {
 
 	public static function clearAppCache() {
 		self::$baseUrl = null;
+		self::$appName = null;
 	}
 
 	private static function getBaseUrl() {
@@ -47,5 +49,13 @@ class Util {
 		}
 
 		return self::$baseUrl;
+	}
+
+	private static function getAppName() {
+		if (self::$appName === null) {
+			self::$appName = \sly_Core::getContainer()->get('sly-app-name');
+		}
+
+		return self::$appName;
 	}
 }
