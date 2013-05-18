@@ -11,6 +11,7 @@
 namespace sly\Assets\Controller;
 
 use Gaufrette\Util\Path;
+use sly\Assets\Service;
 use sly_Authorisation_Exception;
 use sly_Exception;
 use sly_Response;
@@ -132,7 +133,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		}
 	}
 
-	protected function checkFilePermission(\sly_Asset_Service $service, $file) {
+	protected function checkFilePermission(Service $service, $file) {
 		$isProtected = $service->isProtected($file);
 
 		if ($isProtected && !$service->checkPermission($file)) {
