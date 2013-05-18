@@ -91,7 +91,7 @@ class Asset extends Base {
 
 	public function mediapoolAction() {
 		$request = $this->getRequest();
-		$file    = $this->normalizePath($request->get('file', 'string', null));
+		$file    = $this->normalizePath(urldecode($request->get('file', 'string', null)));
 
 		// validate the filename
 
