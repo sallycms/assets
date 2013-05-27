@@ -147,25 +147,25 @@ class App extends sly_App_Base {
 		$router = new sly_Router_Base();
 
 		// addOn assets
-		$router->addRoute(
+		$router->appendRoute(
 			'/assets/addon/(?P<addon>[^/.]+/[^/.]+)/(?P<file>.+?)',
 			array(self::CONTROLLER_PARAM => 'asset', self::ACTION_PARAM => 'addon')
 		);
 
 		// app assets
-		$router->addRoute(
+		$router->appendRoute(
 			'/assets/app/(?P<app>[^/.]+)/(?P<file>.+?)',
 			array(self::CONTROLLER_PARAM => 'asset', self::ACTION_PARAM => 'app')
 		);
 
 		// frontend (project) assets
-		$router->addRoute(
+		$router->appendRoute(
 			'/assets/(?P<file>.+?)',
 			array(self::CONTROLLER_PARAM => 'asset', self::ACTION_PARAM => 'project')
 		);
 
 		// mediapool
-		$router->addRoute(
+		$router->appendRoute(
 			'/mediapool/(?P<file>.+?)',
 			array(self::CONTROLLER_PARAM => 'asset', self::ACTION_PARAM => 'mediapool')
 		);
