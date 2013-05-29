@@ -83,6 +83,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 
 			// prepare the response
 
+			$type     = \sly_Util_File::getMimetype($resultFile); // the type might have changed during processing
 			$response = new \sly_Response_Stream($resultFile, 200);
 			$response->setContentType($type, 'UTF-8');
 
