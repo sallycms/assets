@@ -89,7 +89,9 @@ class App extends sly_App_Base {
 		$config->setStatic('/', $yamlReader->load(SLY_SALLYFOLDER.'/assets/config/static.yml'));
 
 		// boot addOns
-		sly_Core::loadAddOns();
+		if (!sly_Core::isSetup()) {
+			sly_Core::loadAddOns();
+		}
 
 		// setup the stream wrappers
 		$this->registerStreamWrapper();
