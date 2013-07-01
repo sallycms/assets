@@ -19,6 +19,18 @@ use sly_Util_Directory;
 use sly_Util_String;
 
 abstract class Base extends \sly_Controller_Frontend_Base {
+
+	private function getConfig() {
+		return array_merge(
+			array(
+				'etag' => true,
+				'expires' => null,
+				'cache-control' => array('default' => array('max-age' => 29030401))
+			),
+			$this->getContainer()->getConfig()->get('assets', array())
+		);
+	}
+
 	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPermissions) {
 		if (!file_exists($file)) {
 			$response = new sly_Response('File not found.', 404);
@@ -31,11 +43,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		$container = $this->getContainer();
 		$config    = $container->getConfig();
 		$service   = $container->getAssetService();
-		$configs   = $config->get('assets', array(
-			'etag'          => false,
-			'cache-control' => array(),
-			'expires'       => null
-		));
+		$configs   = $this->getConfig();
 
 		try {
 			// check if the filetype may be accessed at all

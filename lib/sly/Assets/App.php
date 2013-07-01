@@ -84,10 +84,6 @@ class App extends sly_App_Base {
 			$container->setI18N(new sly_I18N($locale, null, false));
 		}
 
-		// load static config
-		$yamlReader = $container['sly-service-yaml'];
-		$config->setStatic('/', $yamlReader->load(SLY_SALLYFOLDER.'/assets/config/static.yml'));
-
 		// boot addOns
 		if (!sly_Core::isSetup()) {
 			sly_Core::loadAddOns();
