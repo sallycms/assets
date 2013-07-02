@@ -129,6 +129,16 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$response->setContentType('text/plain', 'UTF-8');
 		}
 
+		$hash = \sly_Core::getRequest()->get('t', 'string');
+		if ($hash) {
+			$filehasher = $container->get('sly-filehasher'); /* @var $filehasher \sly_Service_FileHasher */
+			if ($filehasher->hash($file) === $hash) {
+				$response->addCacheControlDirective('max-age', 60 * 60 * 24 * 7); // cache 1 week if hash matching
+			} else {
+				$response->addCacheControlDirective('max-age', 10); // cache short time if hash not matching
+			}
+		}
+
 		return $response;
 	}
 
