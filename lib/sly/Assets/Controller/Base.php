@@ -19,20 +19,8 @@ use sly_Util_Directory;
 use sly_Util_String;
 
 abstract class Base extends \sly_Controller_Frontend_Base {
-
-	private function getConfig() {
-		return array_merge(
-			array(
-				'etag' => true,
-				'expires' => null,
-				'cache-control' => array('default' => array('max-age' => 29030401))
-			),
-			$this->getContainer()->getConfig()->get('assets', array())
-		);
-	}
-
 	protected function sendFile($file, $process, $useExtensionBlacklist, $checkPermissions) {
-		if (!file_exists($file)) {
+		if (!is_file($file)) {
 			$response = new sly_Response('File not found.', 404);
 			$response->setExpires(time()-24*3600);
 			$response->setContentType('text/plain', 'UTF-8');
@@ -41,6 +29,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 		}
 
 		$container = $this->getContainer();
+		$request   = $this->getRequest();
 		$config    = $container->getConfig();
 		$service   = $container->getAssetService();
 		$configs   = $this->getConfig();
@@ -68,7 +57,7 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$etag = $configs['etag'] && file_exists($file) ? md5_file($file) : null;
 
 			if ($etag) {
-				$etags = $container->getRequest()->getETags();
+				$etags = $request->getETags();
 
 				if (in_array('"'.$etag.'"', $etags)) {
 					$response = new sly_Response('Not modified', 304);
@@ -129,13 +118,18 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 			$response->setContentType('text/plain', 'UTF-8');
 		}
 
-		$hash = \sly_Core::getRequest()->get('t', 'string');
+		$hash = $request->get('t', 'string');
+
 		if ($hash) {
-			$filehasher = $container->get('sly-filehasher'); /* @var $filehasher \sly_Service_FileHasher */
+			$filehasher = $container['sly-filehasher'];
+
 			if ($filehasher->hash($file) === $hash) {
-				$response->addCacheControlDirective('max-age', 60 * 60 * 24 * 7); // cache 1 week if hash matching
-			} else {
-				$response->addCacheControlDirective('max-age', 10); // cache short time if hash not matching
+				// cache 1 week if hash matching
+				$response->addCacheControlDirective('max-age', 60 * 60 * 24 * 7);
+			}
+			else {
+				// cache short time if hash not matching
+				$response->addCacheControlDirective('max-age', 10);
 			}
 		}
 
@@ -150,6 +144,16 @@ abstract class Base extends \sly_Controller_Frontend_Base {
 				throw new sly_Authorisation_Exception('Forbidden');
 			}
 		}
+	}
+
+	protected function getConfig() {
+		$config = $this->getContainer()->getConfig()->get('assets', array());
+
+		return array_merge(array(
+			'etag'          => true,
+			'expires'       => null,
+			'cache-control' => array('default' => array('max-age' => 29030401))
+		), $config);
 	}
 
 	protected function checkFilePermission(Service $service, $file) {
