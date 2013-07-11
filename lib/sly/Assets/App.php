@@ -22,6 +22,8 @@ class App extends sly_App_Base {
 	const CONTROLLER_PARAM = 'slycontroller';  ///< string  the request param that contains the page
 	const ACTION_PARAM     = 'slyaction';      ///< string  the request param that contains the action
 
+	protected $dispatcher;
+
 	public function isBackend() {
 		return false;
 	}
@@ -179,7 +181,7 @@ class App extends sly_App_Base {
 	 */
 	protected function getDispatcher() {
 		if ($this->dispatcher === null) {
-			$this->dispatcher = new \sly_Dispatcher($this->getContainer(), $this->getControllerClassPrefix(), false);
+			$this->dispatcher = new Dispatcher($this->getContainer());
 		}
 
 		return $this->dispatcher;
