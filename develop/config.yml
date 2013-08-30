@@ -1,0 +1,6 @@
+assets:
+  etag: true
+  expires: ~
+  cache-control:
+    default:
+      max-age: 29030401
