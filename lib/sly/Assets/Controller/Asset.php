@@ -18,6 +18,7 @@ class Asset extends Base {
 		$request   = $this->getRequest();
 		$container = $this->getContainer();
 		$addon     = $request->get('addon', 'string', null);
+		$process   = $request->get('process', 'boolean', true);
 		$file      = $this->normalizePath($request->get('file', 'string', null));
 
 		// validate the addOn status
@@ -43,12 +44,13 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile($fullPath, true, true, true);
+		return $this->sendFile($fullPath, $process, true, true);
 	}
 
 	public function appAction() {
 		$request = $this->getRequest();
 		$app     = $this->normalizePath($request->get('app', 'string', null));
+		$process = $request->get('process', 'boolean', true);
 		$file    = $this->normalizePath($request->get('file', 'string', null));
 
 		// validate the app
@@ -71,11 +73,12 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile($appDir.'/assets/'.$file, true, true, true);
+		return $this->sendFile($appDir.'/assets/'.$file, $process, true, true);
 	}
 
 	public function projectAction() {
 		$request = $this->getRequest();
+		$process = $request->get('process', 'boolean', true);
 		$file    = $this->normalizePath($request->get('file', 'string', null));
 
 		// validate the filename
@@ -86,7 +89,7 @@ class Asset extends Base {
 
 		// and send the file
 
-		return $this->sendFile(SLY_BASE.'/assets/'.$file, true, true, true);
+		return $this->sendFile(SLY_BASE.'/assets/'.$file, $process, true, true);
 	}
 
 	public function mediapoolAction() {
