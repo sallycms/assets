@@ -102,6 +102,14 @@ class Asset extends Base {
 			return new sly_Response('no file given', 400);
 		}
 
+		// validate if the file is soft deleted
+
+		$medium = $this->getContainer()->getMediumService()->findByFilename($file);
+
+		if ($medium === null) {
+			return new sly_Response('file not found', 404);
+		}
+
 		// and send the file
 
 		return $this->sendFile('sly://media/'.$file, false, true, true);
